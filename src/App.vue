@@ -1,44 +1,33 @@
 <template>
-  <nav>
-    <div>
-      <RouterLink to="/">Home</RouterLink>
-
-    </div>
-    <div>
-      <RouterLink to="/login">Login</RouterLink>
-
-    </div>
-  </nav>
-
-  <div v-if="isAuth && currentUser ">
-    welcome {{ currentUser.displayName }}
-  </div>
-
-  <button @click="handleLogout">LogOut</button>
-  <RouterView></RouterView>
+  <component :is="layout"></component>
 </template>
+<script lang="ts" setup>
+import { useRoute } from 'vue-router';
+import LoginLayout from './views/Layouts/LoginLayout.vue';
+import MainLayout from './views/Layouts/MainLayout.vue';
+import { onMounted, ref, watch } from 'vue';
+import supabase from './plugin/supaBaseClients';
 
-<script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { useAuthStore } from './stores/authStore';
-import authService from './services/authService';
+const route = useRoute();
+const layout = ref();
 
-const authStore = useAuthStore();
+watch(
+  () => route.meta.layout,
+  (value) => {
+    if(value == "MainLayout"){
+      layout.value = MainLayout;
+    }
+    else if(value == "LoginLayout"){
+      layout.value = LoginLayout;
+    }
+  }
+)
 
-const currentUser = ref();
-const isAuth = ref();
 
 onMounted(async () => {
-  currentUser.value = await authStore.user;
-  isAuth.value = await authService.isAuth();
+  const data = await supabase.from("categories").select();
+
 })
 
-async function handleLogout() {
-  await authStore.logout();
-  location.href="/login"
-}
 
 </script>
-
-
-<style scoped></style>
