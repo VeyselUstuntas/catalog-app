@@ -1,9 +1,8 @@
 <template>
   <a-layout class="layout">
 
-    <a-layout-content style="padding: 0 50px">
-
-      <div :style="{ background: '#fff', padding: '24px', minHeight: '280px' }"><RouterView></RouterView></div>
+    <a-layout-content :class="{layout_content:true}">
+      <div class="layout_content_item"><RouterView></RouterView></div>
     </a-layout-content>
 
     <a-layout-footer style="text-align: center">
@@ -16,6 +15,28 @@
 
 </script>
 <style scoped>
+.layout{
+  height: 100vh;
+  width: 100%;
+}
+
+.layout_content{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.layout_content_item{
+  width: 100%;
+}
+
+.layout-item{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
 .site-layout-content {
   min-height: 280px;
   padding: 24px;

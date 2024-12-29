@@ -6,7 +6,7 @@ import { useRoute } from 'vue-router';
 import LoginLayout from './views/Layouts/LoginLayout.vue';
 import MainLayout from './views/Layouts/MainLayout.vue';
 import { onMounted, ref, watch } from 'vue';
-import supabase from './plugin/supaBaseClients';
+import categoryService from './services/categoryService';
 
 const route = useRoute();
 const layout = ref();
@@ -25,7 +25,7 @@ watch(
 
 
 onMounted(async () => {
-  const data = await supabase.from("categories").select();
+  const data = await categoryService.getCategories();
 
 })
 

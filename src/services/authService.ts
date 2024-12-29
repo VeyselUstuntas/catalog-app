@@ -1,8 +1,8 @@
 import supabase from "@/plugin/supaBaseClients";
 
 export interface IUser {
-  id: number;
-  displayName: string;
+  id: string | undefined;
+  displayName: string |undefined;
 
 }
 
@@ -30,8 +30,8 @@ class AuthService {
 
     const user = data.user;
     return {
-      id: 1,
-      displayName: user!.email! as string
+      id: user?.id,
+      displayName: user?.email
     };
   }
 

@@ -5,20 +5,34 @@
       <a-menu theme="dark" mode="inline">
         <a-menu-item :key="category.id" v-for="category in categories">
           <user-outlined />
-          <RouterLink :to="'/category/'+ category.id" class="nav-text">{{ category.title }}</RouterLink>
+          <RouterLink :to="'/category/' + category.id" class="nav-text">{{ category.title }}</RouterLink>
         </a-menu-item>
 
       </a-menu>
     </a-layout-sider>
     <a-layout>
-      <a-layout-header :style="{ background: '#fff', padding: 0 , 'text-align':'right', 'margin-right':'10px'}" >
+      <a-layout-header :style="{ background: '#fff', padding: 0, 'text-align': 'right', 'margin-right': '10px' }">
+        <a-dropdown-button>
+          {{ authStore.user?.displayName }}
+          <template #overlay>
+            <a-menu>
+              <a-menu-item key="1">
+                <RouterLink to="/cart" type="primary">
+                  Sepet
+                </RouterLink>
+              </a-menu-item>
+              <a-menu-item key="2" @click="handleLogOut">
+                Logout
+              </a-menu-item>
 
-        <RouterLink to="/cart" type="primary">
-          Sepet
-        </RouterLink>
+            </a-menu>
+          </template>
+        </a-dropdown-button>
       </a-layout-header>
       <a-layout-content :style="{ margin: '24px 16px 0' }">
-        <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }"><RouterView/></div>
+        <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
+          <RouterView />
+        </div>
       </a-layout-content>
       <a-layout-footer style="text-align: center">
         Ant Design ©2018 Created by Ant UED
@@ -29,14 +43,19 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import { UserOutlined, } from '@ant-design/icons-vue';
-import supabase from '@/plugin/supaBaseClients';
+import categoryService from '@/services/categoryService';
+import { useAuthStore } from '@/stores/authStore';
 
-
+const authStore = useAuthStore();
 const categories = ref();
 
+const handleLogOut = async () => {
+  await authStore.logout();
+}
+
 onMounted(async () => {
-  const {data} = await supabase.from("categories").select();
-  categories.value = data;
+  const categoryData = await categoryService.getCategories();
+  categories.value = categoryData;
 })
 </script>
 <style scoped>

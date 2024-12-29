@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '@/views/LoginView.vue'
 import HomeView from '@/views/HomeView.vue'
-import { useAuthStore } from '@/stores/authStore'
+import {useAuthStore } from '@/stores/authStore'
 import CategoryView from '@/views/CategoryView.vue'
 import CartView from '@/views/CartView.vue'
 
@@ -40,6 +40,7 @@ const router = createRouter({
       name: 'category',
       component: CategoryView,
       meta: {
+        authRequired: true,
         layout: "MainLayout"
       }
     },
@@ -49,17 +50,18 @@ const router = createRouter({
       name: 'cart',
       component: CartView,
       meta: {
+        authRequired: true,
         layout: "MainLayout"
       }
     },
   ],
 })
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
 
-  const authStore = useAuthStore();
+  const {isAuth} = useAuthStore();
 
-  if (to.meta.authRequired && !authStore.isAuth) {
+  if (to.meta.authRequired && !isAuth) {
     location.href = "/login";
   }
 })

@@ -33,7 +33,10 @@
 </template>
 
 <script setup lang="ts">
-import supabase from '@/plugin/supaBaseClients';
+import cartService from '@/services/cartService';
+import categoryService from '@/services/categoryService';
+import productService from '@/services/productService';
+import { useAuthStore } from '@/stores/authStore';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -43,10 +46,13 @@ const products = ref();
 const loading = ref(true);
 const category = ref();
 
+const authStore = useAuthStore();
+
+
 const loadProducts = async () => {
   loading.value = true;
-  const { data: productsData } = await supabase.from("products").select().eq("category_id", route.params.id);
-  const { data: categoryData } = await supabase.from("categories").select().eq("id", route.params.id).single();
+  const { data: productsData } = await productService.getProducts(route.params.id);
+  const { data: categoryData } = await categoryService.getCategory(route.params.id);
   category.value = categoryData;
   products.value = productsData;
 
@@ -60,12 +66,7 @@ watch(
 );
 
 const handleAddChart = async (product: any) => {
-  const { data: userData } = await supabase.auth.getUser();
-  await supabase.from("carts").insert({
-    amount: 1,
-    product_id: product.id,
-    user_id: userData.user?.id
-  });
+  await cartService.addCartItem(authStore.userId, product.id);
 
   alert('Ürün Başarıyla Eklendi');
 
